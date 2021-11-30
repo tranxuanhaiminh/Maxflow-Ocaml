@@ -61,6 +61,14 @@ let export path graph =
   close_out ff ;
   ()
 
+let export_path path ndlist =
+  let ff = open_out path in
+
+  List.iter (fun id -> fprintf ff "%d\n" id) ndlist ;
+
+  close_out ff ;
+  ()
+
 
 (* Reads a line with a node. *)
 let read_node id graph line =
