@@ -10,4 +10,4 @@ type path = id list
  *
  *  forbidden is a list of forbidden nodes (they have already been visited)
  *)
-val find_path: int graph -> id list -> id -> id -> path
+val find_path: int graph -> id list -> id -> id -> path option

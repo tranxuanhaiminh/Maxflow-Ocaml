@@ -28,10 +28,10 @@ let () =
   let _graph2 = gmap graph int_of_string in
   let _graph3 = add_arc _graph2 0 2 3 in
   let _graph4 = gmap _graph3 string_of_int in
-  let _graph5 = find_path _graph2 [] 3 5 in
+  let _graph5 = find_path _graph2 [] 3 4 in
 
   (* Rewrite the graph that has been read. *)
-  let () = export_path outfile _graph5 in
+  let () = export_path outfile (Option.get _graph5) in
 
   ()
 
