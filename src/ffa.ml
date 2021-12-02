@@ -5,7 +5,7 @@ open Graph
 (* token: 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 *)
 
 (* let find_path gr forbidden id1 id2 = match (out_arcs gr id1) with
-| (id, _) :: rest ->  *)
+   | (id, _) :: rest ->  *)
 
 
 
@@ -13,6 +13,7 @@ open Graph
 type path = id list
 
 let rec find_path gr forbidden id1 id2 = 
+
   let n_list id = 
 
     let rec ns = function
@@ -21,58 +22,24 @@ let rec find_path gr forbidden id1 id2 =
 
     ns (out_arcs gr id) in
 
-  let rec append l1 = function
-    | x :: rest -> if (List.mem x l1) then append l1 rest else append (List.append l1 [x]) rest
-    | [] -> l1 in
+  let rec fp2 id2 = function
+    | [] -> []
+    | id :: rest -> 
+      if List.mem id forbidden 
+      then fp2 id2 rest 
+      else
+      if (id = id2)
+      then [id]
+      else match (find_path gr (id :: forbidden) id id2) with 
+        | None -> fp2 id2 rest
+        | Some x -> id :: x in
 
-  let rec loop = function
-    | (x :: rest, acu) ->
-    if List.mem x acu
-    then loop (append rest (n_list x), append acu (n_list x))
-    else loop (append rest (n_list x), append acu (n_list x))
-    | ([], acu) -> acu in
+  let res = match (n_list id1) with
+    | [] -> []
+    | x -> match (fp2 id2 x) with
+      | [] -> []
+      | x -> x in
 
-  match (loop ([3], [3])) with
-    | [] -> None
-    | x -> Some x
-
-
-
-
-
-
-
-
-  (* match (out_arcs gr id1) with
-  | (x, _) :: rest -> if (!List.mem x forbidden) then find_path gr (id1 :: forbidden) id1 id2
-  | [] ->  *)
-  
-
-
-  (* let rec loop (acu, forbidden) (id, _) =
-
-  if List.mem id forbidden
-  then List.fold_left loop (acu, forbidden) (out_arcs gr id)
-  else List.fold_left loop (id :: acu, id :: forbidden) (out_arcs gr id)
-  in
-
-  match (loop ([], []) (id1, 0)) with
-    | (_, []) -> None
-    | (_, x) -> Some x *)
-
-
-(* let bfs ids idf gr noeuds_accu =
-  if List.exists (fun (x, _) -> x = idf) (List.hd noeuds_accu)
-  then 
-  else 
-
-    x = [0]
-      while each of out_arcs of last of x not idf
-            add out_arcs not yet in x to x
-    x = [0;1;2;3]
-
-                                           ret idf :: x
-
-          x = 0
-                                           loop id x bool = 
-                                         if bool then y = out_arcs id that not yet in x *)
+  match res with
+  | [] -> None
+  | x -> Some x
