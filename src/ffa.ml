@@ -2,7 +2,7 @@
 open Graph
 
 (* assert false is of type ∀α.α, so the type-checker is happy. *)
-(* token: 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 *)
+(* token: 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 *)
 
 (* let find_path gr forbidden id1 id2 = match (out_arcs gr id1) with
    | (id, _) :: rest ->  *)
@@ -22,24 +22,26 @@ let rec find_path gr forbidden id1 id2 =
 
     ns (out_arcs gr id) in
 
-  let rec fp2 id2 = function
-    | [] -> []
-    | id :: rest -> 
-      if List.mem id forbidden 
-      then fp2 id2 rest 
-      else
-      if (id = id2)
-      then [id]
-      else match (find_path gr (id :: forbidden) id id2) with 
-        | None -> fp2 id2 rest
-        | Some x -> id :: x in
+  let rec res forbidden id1 id2 = 
 
-  let res = match (n_list id1) with
-    | [] -> []
-    | x -> match (fp2 id2 x) with
+    let rec fp2 forbidden id2 = function
       | [] -> []
-      | x -> x in
+      | id :: rest -> 
+        if List.mem id forbidden 
+        then fp2 (id :: forbidden) id2 rest 
+        else
+        if (id = id2)
+        then [id]
+        else match (res forbidden id id2) with 
+          | None -> fp2 forbidden id2 rest
+          | Some x -> id :: x in
 
-  match res with
-  | [] -> None
-  | x -> Some x
+    match (n_list id1) with
+    | [] -> None
+    | x -> match (fp2 (id1 :: forbidden) id2 x) with
+      | [] -> None
+      | x -> Some x in
+
+  match res forbidden id1 id2 with
+  | None -> None
+  | Some x -> Some (id1 :: x)
