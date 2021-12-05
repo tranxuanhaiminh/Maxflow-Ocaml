@@ -65,10 +65,20 @@ let export_path path ndlist =
   let ff = open_out path in
 
   List.iter (fun id -> fprintf ff "%d\n" id) ndlist ;
+  (* fprintf ff "Min flow of this path is: %d" ndlist ; *)
 
   close_out ff ;
   ()
 
+
+let export_num path num = 
+  
+  let ff = open_out path in
+  
+  fprintf ff "%d\n" num;
+
+  close_out ff;
+  ()
 
 (* Reads a line with a node. *)
 let read_node id graph line =

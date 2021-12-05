@@ -1,5 +1,6 @@
 (* Yes, we have to repeat open Graph. *)
 open Graph
+open Tools
 
 (* assert false is of type ∀α.α, so the type-checker is happy. *)
 (* token: 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 *)
@@ -7,7 +8,7 @@ open Graph
 (* let find_path gr forbidden id1 id2 = match (out_arcs gr id1) with
    | (id, _) :: rest ->  *)
 
-
+(* exception Graph_error *)
 
 (* A path is a list of nodes. *)
 type path = id list
@@ -45,3 +46,31 @@ let rec find_path gr forbidden id1 id2 =
   match res forbidden id1 id2 with
   | None -> None
   | Some x -> Some (id1 :: x)
+
+
+  
+
+let rec min_flow gr = function
+  | None -> 0
+  | Some ([]) -> 0
+  | Some (id1 :: []) -> 0
+  | Some (id1 :: id2 :: rest) -> match (find_arc gr id1 id2) with
+    | None -> raise (Graph_error("Path error in path between node" ^ string_of_int id1 ^ " and " ^ string_of_int id2))
+    | Some lbl ->
+      let next_lbl = min_flow gr (Some(id2 :: rest)) in
+      if (lbl < next_lbl) || (next_lbl == 0) then lbl else next_lbl
+      
+let rec step gr min = function
+  | None -> gr
+  | Some ([]) -> gr
+  | Some (id1 :: []) -> gr
+  | Some (id1 :: id2 :: rest) ->
+  if (Option.get (find_arc gr id1 id2) == min)
+  then step (remove_arc gr id1 id2) min (Some(id2 :: rest))
+  else step (add_arc gr id1 id2 (Int.neg(min))) min (Some(id2 :: rest))
+
+let rec ford gr id1 id2 = match (find_path gr [] id1 id2) with
+  | None -> 0
+  | Some p ->
+  let min = min_flow gr (Some p) in
+  min + ford (step gr min (Some p)) id1 id2

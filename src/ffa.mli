@@ -11,3 +11,9 @@ type path = id list
  *  forbidden is a list of forbidden nodes (they have already been visited)
  *)
 val find_path: int graph -> id list -> id -> id -> path option
+
+val min_flow: int graph -> path option -> int
+
+val step: int graph -> int -> path option -> int graph
+
+val ford: int graph -> id -> id -> int

@@ -23,6 +23,9 @@ val new_node: 'a graph -> id -> 'a graph
  * @raise Graph_error if node id1 or id2 does not exist in the graph. *)
 val new_arc: 'a graph -> id -> id -> 'a -> 'a graph
 
+(* remove_arc gr id1 id2 : remove arc from node id1 to node id2 *)
+val remove_arc: 'a graph -> id -> id -> 'a graph
+
 
 (**************  GETTERS  *****************)
 
