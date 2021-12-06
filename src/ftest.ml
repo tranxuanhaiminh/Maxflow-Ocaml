@@ -32,7 +32,7 @@ let () =
   let _min_f = min_flow _graph2 _dfs_path in
   let _step = step _graph2 _min_f _dfs_path in
   let _string_step = gmap _step string_of_int in
-  let _ford = ford _graph2 0 4 in
+  let _ford = ford _graph2 0 5 in
 
   (* Rewrite the graph that has been read. *)
   (* let () = export outfile graph in *)

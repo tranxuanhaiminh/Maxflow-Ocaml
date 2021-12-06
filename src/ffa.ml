@@ -16,11 +16,9 @@ type path = id list
 let rec find_path gr forbidden id1 id2 = 
 
   let n_list id = 
-
     let rec ns = function
       | (x, _) :: rest -> x :: ns rest
       | [] -> [] in
-
     ns (out_arcs gr id) in
 
   let rec res forbidden id1 id2 = 
@@ -48,7 +46,6 @@ let rec find_path gr forbidden id1 id2 =
   | Some x -> Some (id1 :: x)
 
 
-  
 
 let rec min_flow gr = function
   | None -> 0
@@ -59,18 +56,25 @@ let rec min_flow gr = function
     | Some lbl ->
       let next_lbl = min_flow gr (Some(id2 :: rest)) in
       if (lbl < next_lbl) || (next_lbl == 0) then lbl else next_lbl
-      
+
+
+
 let rec step gr min = function
   | None -> gr
   | Some ([]) -> gr
   | Some (id1 :: []) -> gr
   | Some (id1 :: id2 :: rest) ->
-  if (Option.get (find_arc gr id1 id2) == min)
-  then step (remove_arc gr id1 id2) min (Some(id2 :: rest))
-  else step (add_arc gr id1 id2 (Int.neg(min))) min (Some(id2 :: rest))
+    let gr_ecart = add_arc gr id2 id1 min in
+
+    if (Option.get (find_arc gr_ecart id1 id2) == min)
+    then step (remove_arc gr_ecart id1 id2) min (Some(id2 :: rest))
+    else step (add_arc gr_ecart id1 id2 (Int.neg(min))) min (Some(id2 :: rest))
+
+
+
 
 let rec ford gr id1 id2 = match (find_path gr [] id1 id2) with
   | None -> 0
   | Some p ->
-  let min = min_flow gr (Some p) in
-  min + ford (step gr min (Some p)) id1 id2
+    let min = min_flow gr (Some p) in
+    min + ford (step gr min (Some p)) id1 id2
