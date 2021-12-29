@@ -11,6 +11,6 @@ let gmap gr f =
 
 let add_arc gr id1 id2 i =
   let existing_arc = match (find_arc gr id1 id2) with
-    | None -> 0
+    | None -> 0.
     | Some x -> x in
-  new_arc gr id1 id2 (i + existing_arc)
+  new_arc gr id1 id2 (Float.add i existing_arc)

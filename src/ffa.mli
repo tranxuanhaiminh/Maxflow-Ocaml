@@ -10,10 +10,10 @@ type path = id list
  *
  *  forbidden is a list of forbidden nodes (they have already been visited)
  *)
-val find_path: int graph -> id list -> id -> id -> path option
+val find_path: float graph -> id list -> id -> id -> path option
 
-val min_flow: int graph -> path option -> int
+val min_flow: float graph -> path option -> float
 
-val step: int graph -> int -> path option -> int graph
+val step: float graph -> float -> path option -> float graph
 
-val ford: int graph -> id -> id -> int
+val ford: float graph -> id -> id -> (float * float graph)

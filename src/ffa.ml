@@ -48,14 +48,14 @@ let rec find_path gr forbidden id1 id2 =
 
 
 let rec min_flow gr = function
-  | None -> 0
-  | Some ([]) -> 0
-  | Some (id1 :: []) -> 0
+  | None -> 0.
+  | Some ([]) -> 0.
+  | Some (id1 :: []) -> 0.
   | Some (id1 :: id2 :: rest) -> match (find_arc gr id1 id2) with
     | None -> raise (Graph_error("Path error in path between node" ^ string_of_int id1 ^ " and " ^ string_of_int id2))
     | Some lbl ->
       let next_lbl = min_flow gr (Some(id2 :: rest)) in
-      if (lbl < next_lbl) || (next_lbl == 0) then lbl else next_lbl
+      if (lbl < next_lbl) || (next_lbl == 0.) then lbl else next_lbl
 
 
 
@@ -68,13 +68,15 @@ let rec step gr min = function
 
     if (Option.get (find_arc gr_ecart id1 id2) == min)
     then step (remove_arc gr_ecart id1 id2) min (Some(id2 :: rest))
-    else step (add_arc gr_ecart id1 id2 (Int.neg(min))) min (Some(id2 :: rest))
+    else step (add_arc gr_ecart id1 id2 (Float.neg(min))) min (Some(id2 :: rest))
 
 
 
 
 let rec ford gr id1 id2 = match (find_path gr [] id1 id2) with
-  | None -> 0
+  | None -> (0., gr)
   | Some p ->
     let min = min_flow gr (Some p) in
-    min + ford (step gr min (Some p)) id1 id2
+    let graph_ecart = step gr min (Some p) in
+    match (ford graph_ecart id1 id2) with
+      | (x, _) -> (Float.add min x, graph_ecart)

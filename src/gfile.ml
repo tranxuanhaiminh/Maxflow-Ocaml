@@ -80,6 +80,15 @@ let export_num path num =
   close_out ff;
   ()
 
+let export_float path num = 
+  
+  let ff = open_out path in
+  
+  fprintf ff "%f\n" num;
+
+  close_out ff;
+  ()
+
 (* Reads a line with a node. *)
 let read_node id graph line =
   try Scanf.sscanf line "n %f %f" (fun _ _ -> new_node graph id)

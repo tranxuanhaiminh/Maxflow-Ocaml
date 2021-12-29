@@ -1,6 +1,7 @@
 open Gfile
 open Tools
 open Ffa
+open Mfile
 
 let () =
 
@@ -23,7 +24,7 @@ let () =
   in
 
   (* Open file *)
-  let graph = from_file infile in
+  (* let graph = from_file infile in
 
   let _graph2 = gmap graph int_of_string in
   let _graph3 = add_arc _graph2 0 2 3 in
@@ -32,13 +33,21 @@ let () =
   let _min_f = min_flow _graph2 _dfs_path in
   let _step = step _graph2 _min_f _dfs_path in
   let _string_step = gmap _step string_of_int in
-  let _ford = ford _graph2 0 5 in
+  let _ford = ford _graph2 0 5 in *)
 
   (* Rewrite the graph that has been read. *)
   (* let () = export outfile graph in *)
   (* let () = export outfile _string_step in *)
   (* let () = export_path outfile (Option.get _dfs_path) in *)
-  let () = export_num outfile _ford in
+  (* let () = export_num outfile _ford in *)
+
+  let _graph5 = money_file infile in
+  let _graph2 = gmap _graph5 Float.of_string in
+  let (_ford, money_graph) = ford _graph2 0 1 in
+  let _money_graph2 = gmap money_graph Float.to_string in
+
+  let () = write_file outfile _graph5 in
+  (* let () = export_float outfile _ford in *)
+  (* let () = export outfile _money_graph2 in *)
 
   ()
-
