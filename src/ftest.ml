@@ -43,11 +43,15 @@ let () =
 
   let _graph5 = money_file infile in
   let _graph2 = gmap _graph5 Float.of_string in
+  let _dfs_path = (find_path _graph2 [] 0 1) in
+  let _min_f = min_flow _graph2 _dfs_path in
+  let _step = step _graph2 _min_f _dfs_path in
   let (_ford, money_graph) = ford _graph2 0 1 in
   let _money_graph2 = gmap money_graph Float.to_string in
 
-  let () = write_file outfile _graph5 in
-  (* let () = export_float outfile _ford in *)
+  let () = write_file outfile _money_graph2 in
+  (* let () = export_float outfile _min_f in *)
   (* let () = export outfile _money_graph2 in *)
+  (* let () = export_path outfile (Option.get _dfs_path) in *)
 
   ()
