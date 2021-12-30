@@ -12,8 +12,15 @@ val from_file: path -> string graph
  * If necessary, use gmap (to be written by you) to prepare the input graph. *)
 val write_file: path -> string graph -> unit
 
+(* Similarly, we write only a string graph.
+ * If necessary, use gmap (to be written by you) to prepare the input graph. *)
+val write_file2: path -> float graph -> unit
+
 (* We write a string graph in dot format. *)
 val export: path -> string graph -> unit
+
+(* We write a string graph in dot format. *)
+val export2: path -> float graph -> unit
 
 (* We write a string graph in dot format. *)
 val export_path: path -> int list -> unit

@@ -39,6 +39,27 @@ let write_file path graph =
   ()
 
 
+let write_file2 path graph =
+
+  (* Open a write-file. *)
+  let ff = open_out path in
+
+  (* Write in this file. *)
+  fprintf ff "%% This is a graph.\n\n" ;
+
+  (* Write all nodes (with fake coordinates) *)
+  n_iter_sorted graph (fun id -> fprintf ff "n %.1f 1.0\n" (float_of_int id)) ;
+  fprintf ff "\n" ;
+
+  (* Write all arcs *)
+  e_iter graph (fun id1 id2 lbl -> fprintf ff "e %d %d %f\n" id1 id2 lbl) ;
+
+  fprintf ff "\n%% End of graph\n" ;
+
+  close_out ff ;
+  ()
+
+
 let export path graph =
 
   (* Open a write-file. *)
@@ -55,6 +76,28 @@ let export path graph =
 
   (* Write all arcs *)
   e_iter graph (fun id1 id2 lbl -> fprintf ff "%d -> %d [label = \"%s\"];\n" id1 id2 lbl) ;
+
+  fprintf ff "}\n" ;
+
+  close_out ff ;
+  ()
+
+let export2 path graph =
+
+  (* Open a write-file. *)
+  let ff = open_out path in
+
+  (* Write in this file. *)
+  fprintf ff "digraph finite_state_machine { \nrankdir=LR; \nsize=\"8,5\" \nnode [shape = circle]; \n" ;
+
+  (*
+    (* Write all nodes (with fake coordinates) *)
+    n_iter_sorted graph (fun id -> fprintf ff "n %.1f 1.0\n" (float_of_int id)) ;
+    fprintf ff "\n" ;
+  *)
+
+  (* Write all arcs *)
+  e_iter graph (fun id1 id2 lbl -> fprintf ff "%d -> %d [label = \"%f\"];\n" id1 id2 lbl) ;
 
   fprintf ff "}\n" ;
 

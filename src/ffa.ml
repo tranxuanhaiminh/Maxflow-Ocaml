@@ -65,8 +65,9 @@ let rec step gr min = function
   | Some (id1 :: []) -> gr
   | Some (id1 :: id2 :: rest) ->
     let gr_ecart = add_arc gr id2 id1 min in
-
-    if (Option.get (find_arc gr_ecart id1 id2) == min)
+    let lbl = Option.get (find_arc gr_ecart id1 id2) in
+    (* Printf.printf"min: %f arc from %d to %d has lbl: %f is %b\n" min id1 id2 lbl (min = lbl); *)
+    if (lbl = min)
     then step (remove_arc gr_ecart id1 id2) min (Some(id2 :: rest))
     else step (add_arc gr_ecart id1 id2 (Float.neg(min))) min (Some(id2 :: rest))
 
@@ -79,4 +80,4 @@ let rec ford gr id1 id2 = match (find_path gr [] id1 id2) with
     let min = min_flow gr (Some p) in
     let graph_ecart = step gr min (Some p) in
     match (ford graph_ecart id1 id2) with
-      | (x, _) -> (Float.add min x, graph_ecart)
+      | (x, graph_ecart2) -> (Float.add min x, graph_ecart2)

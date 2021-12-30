@@ -1,11 +1,8 @@
 %% Test graph #1
 
-%% The total amount of money
-
-s 20
-
 %% Each person with their amount of money paid
 
 n 40
+n 50
 n 10
-n 10
+n 20
