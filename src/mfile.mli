@@ -5,8 +5,8 @@ open Graph
 
 type path = string
 
-(* Values are read as strings. *)
+(* Read input files to build graph *)
 val money_file: path -> (string graph * int list * int list * float)
 
-(* export result file *)
+(* Write result file *)
 val payback: path -> float graph -> int list -> int list -> float -> unit

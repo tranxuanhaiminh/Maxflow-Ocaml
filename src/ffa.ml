@@ -46,7 +46,7 @@ let rec find_path gr forbidden id1 id2 =
   | Some x -> Some (id1 :: x)
 
 
-
+(* The min flow of a path *)
 let rec min_flow gr = function
   | None -> 0.
   | Some ([]) -> 0.
@@ -58,7 +58,7 @@ let rec min_flow gr = function
       if (lbl < next_lbl) || (next_lbl == 0.) then lbl else next_lbl
 
 
-
+(* New graph after take away the min_flow value from selected path and add an arc with the same value but opposite direction *)
 let rec step gr min = function
   | None -> gr
   | Some ([]) -> gr
@@ -66,14 +66,12 @@ let rec step gr min = function
   | Some (id1 :: id2 :: rest) ->
     let gr_ecart = add_arc gr id2 id1 min in
     let lbl = Option.get (find_arc gr_ecart id1 id2) in
-    (* Printf.printf"min: %f arc from %d to %d has lbl: %f is %b\n" min id1 id2 lbl (min = lbl); *)
     if (lbl = min)
     then step (remove_arc gr_ecart id1 id2) min (Some(id2 :: rest))
     else step (add_arc gr_ecart id1 id2 (Float.neg(min))) min (Some(id2 :: rest))
 
 
-
-
+(* Ford Fulkerson algorithm *)
 let rec ford gr id1 id2 = match (find_path gr [] id1 id2) with
   | None -> (0., gr)
   | Some p ->

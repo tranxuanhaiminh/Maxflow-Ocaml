@@ -3,18 +3,11 @@ open Printf
 
 type path = string
 
-(* Reads the avg of the amount of money paid *)
-let read_avg line =
-  try Scanf.sscanf line "a %f" (fun x -> x)
-  with e ->
-    Printf.printf "Cannot read node in line - %s:\n%s\n%!" (Printexc.to_string e) line ;
-    failwith "from_file"
-
 (* Ensure that the given node exists in the graph. If not, create it. 
  * (Necessary because the website we use to create online graphs does not generate correct files when some nodes have been deleted.) *)
 let ensure graph id = if node_exists graph id then graph else new_node graph id
 
-(* Reads a line with a node. *)
+(* Read a person's payment and compare with avg to determine where to put that person in the graph as a node *)
 let read_node id graph line avg inlay outlay=
   try Scanf.sscanf line "n %f" (fun x ->
     let diff = Float.sub x avg in
@@ -34,8 +27,9 @@ let read_comment graph line =
     Printf.printf "Unknown line:\n%s\n%!" line ;
     failwith "from_file"
 
-let read_avg2 line avg =
-  try Scanf.sscanf line "n %f" (fun x -> Float.add avg x)
+(* Read each person's payment to get the total payment *)
+let read_sum line sum =
+  try Scanf.sscanf line "n %f" (fun x -> Float.add sum x)
   with e ->
     Printf.printf "Cannot read node in line - %s:\n%s\n%!" (Printexc.to_string e) line ;
     failwith "from_file"
@@ -44,30 +38,32 @@ let money_file path =
 
   let infile1 = open_in path in
 
-  let rec loop1 n avg =
+  (* First loop to get the sum -> average *)
+  let rec loop1 n sum =
     try
       let line = input_line infile1 in
       let line = String.trim line in
-      let (n2, avg2) =
-      if line = "" then (n, avg)
+      let (n2, sum2) =
+      if line = "" then (n, sum)
       else match line.[0] with
-        | 'n' -> ((Float.add n 1.), read_avg2 line avg)
-        | _ -> (n, avg)
+        | 'n' -> ((Float.add n 1.), read_sum line sum)
+        | _ -> (n, sum)
       in
-    loop1 n2 avg2
-    with End_of_file -> (n, avg)
+    loop1 n2 sum2
+    with End_of_file -> (n, sum)
   in
 
+  (* Obtain the average *)
   let (n, sum) = loop1 1. 0. in
 
   let avg = Float.div sum (Float.sub n 1.) in
 
   close_in infile1 ;
 
+
   let infile = open_in path in
 
-  (* Read all lines until end of file. 
-   * n is the current node counter. *)
+  (* Read and build graph based on the average value *)
   let rec loop n (graph, inlay, outlay)  =
     try
       let line = input_line infile in
@@ -91,28 +87,29 @@ let money_file path =
     with End_of_file -> (n, (graph, inlay, outlay)) (* Done *)
   in
 
+  (* A loop through the graph to create arcs from each node in layer inlay to layer outlay *)
   let rec loop2 graph sum inlay outlay =
     match inlay with
       | [] -> graph
       | x :: rest -> loop2 (List.fold_left (fun a b -> new_arc a x b sum) graph outlay) sum rest outlay in
 
+  (* Create graph with only 2 nodes *)
   let phase1_graph = new_node (new_node empty_graph 0) 1 in
 
+  (* Create graph with all people as nodes connect to the 2 first nodes *)
   let (max, (phase2_graph, inlay, outlay)) = loop 2 (phase1_graph, [], []) in
 
+  (* The final graph *)
   let final_graph = loop2 phase2_graph (Float.to_string sum) inlay outlay in
 
   close_in infile ;
   (final_graph, inlay, outlay, sum)
 
+(* Write to outfile the result of the payment *)
 let payback path graph inlay outlay avg =
 
   let ff = open_out path in
-
-  (* List.iter2 (fun a b -> match (find_arc graph a b) with
-    | Some x -> fprintf ff "Number %d has to pay number %d back %f [currency unit]" a b x
-    | None -> fprintf ff "") inlay outlay *)
-
+  
   List.iter (fun a -> List.iter (fun b -> match (find_arc graph a b) with
     | Some x -> 
       let sub = Float.sub avg x in

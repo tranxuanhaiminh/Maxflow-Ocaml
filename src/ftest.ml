@@ -41,10 +41,13 @@ let () =
   (* let () = export_path outfile (Option.get _dfs_path) in *)
   (* let () = export_num outfile _ford in *)
 
+
+  (* Create graph from file graph1 which has information about each person's payment *)
   let (_graph5, inlay, outlay, avg) = money_file infile in
   let _graph2 = gmap _graph5 Float.of_string in
 
-  let _dfs_path = (find_path _graph2 [] 0 1) in
+
+  (* let _dfs_path = (find_path _graph2 [] 0 1) in
   let _min_f = min_flow _graph2 _dfs_path in
   let _step = step _graph2 _min_f _dfs_path in
 
@@ -54,12 +57,15 @@ let () =
   
   let _dfs_path3 = find_path _step2 [] 0 1 in
   let _min_f3 = min_flow _step2 _dfs_path3 in
-  let _step3 = step _step2 _min_f3 _dfs_path3 in
+  let _step3 = step _step2 _min_f3 _dfs_path3 in *)
 
+
+  (* Apply Ford Fulkerson algorithm to get max flow *)
   let (_ford, _money_graph) = ford _graph2 0 1 in
-  let _money_graph2 = gmap _money_graph Float.to_string in
   
+  (* Write result to outfile (who has to pay who and how much) *)
   let () = payback outfile _money_graph inlay outlay avg in
+
 
   (* let () = write_file outfile _graph5 in *)
   (* let () = write_file2 outfile _step in *)

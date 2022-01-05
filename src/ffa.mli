@@ -12,8 +12,11 @@ type path = id list
  *)
 val find_path: float graph -> id list -> id -> id -> path option
 
+(* The min flow of a path *)
 val min_flow: float graph -> path option -> float
 
+(* New graph after take away the min_flow value from selected path and add an arc with the same value but opposite direction *)
 val step: float graph -> float -> path option -> float graph
 
+(* Ford Fulkerson algorithm *)
 val ford: float graph -> id -> id -> (float * float graph)
